@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wardrobe — Jugendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #15130F;
+    --surface: #1D1A15;
+    --hairline: rgba(201, 161, 92, 0.22);
+    --brass: #C9A15C;
+    --brass-soft: #E3C989;
+    --rust: #A85C36;
+    --text: #ECE6D9;
+    --text-muted: #A79C89;
+    --text-dim: #756B5A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 0 0 60px;
+  }
+
+  h1, h2 { font-family: 'Fraunces', serif; font-weight: 500; letter-spacing: -0.01em; }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav { border-bottom: 1px solid var(--hairline); position: relative; }
+
+  nav .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    max-width: 1100px;
+  }
+
+  nav .logo { font-family: 'Fraunces', serif; font-size: 19px; color: var(--brass-soft); }
+
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  .nav-toggle span { width: 22px; height: 2px; background: var(--brass-soft); display: block; }
+
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 64px;
+    right: 24px;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    list-style: none;
+    z-index: 60;
+  }
+
+  .nav-menu.open { display: block; }
+
+  .nav-menu li a {
+    display: block;
+    padding: 14px 22px;
+    font-size: 14px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .nav-menu li:last-child a { border-bottom: none; }
+  .nav-menu li a:hover, .nav-menu li a.active { color: var(--brass-soft); }
+
+  /* HEADER */
+  header.page-head {
+    text-align: center;
+    padding: 52px 24px 36px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  header.page-head .kicker {
+    color: var(--rust);
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+  }
+
+  header.page-head h1 { font-size: clamp(28px, 4.5vw, 40px); }
+  header.page-head p {
+    margin-top: 14px;
+    color: var(--text-muted);
+    max-width: 46ch;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 15px;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    position: relative;
+    max-width: 420px;
+    margin: 28px auto 0;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    color: var(--text);
+    padding: 12px 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14.5px;
+  }
+
+  .search-wrap input::placeholder { color: var(--text-dim); }
+  .search-wrap input:focus { outline: none; border-color: var(--brass); }
+
+  .suggestions {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-top: none;
+    z-index: 40;
+    text-align: left;
+  }
+
+  .suggestions.open { display: block; }
+
+  .suggestions div {
+    padding: 11px 16px;
+    font-size: 13.5px;
+    color: var(--brass-soft);
+    cursor: pointer;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .suggestions div:last-child { border-bottom: none; }
+  .suggestions div:hover { background: rgba(201,161,92,0.08); }
+
+  .search-msg {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 10px;
+    min-height: 16px;
+  }
+
+  /* GALLERY */
+  .gallery {
+    margin-top: 40px;
+    padding: 0 24px;
+  }
+
+  .gallery-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  @media (min-width: 640px) {
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .outfit-card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .outfit-card img { width: 100%; height: 320px; object-fit: cover; display: block; }
+
+  .outfit-card .body { padding: 20px; }
+
+  .outfit-card .tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brass-soft);
+    border: 1px solid var(--hairline);
+    padding: 4px 10px;
+    margin-bottom: 10px;
+  }
+
+  .outfit-card h3 { font-size: 17px; color: var(--text); margin-bottom: 8px; font-weight: 500; }
+  .outfit-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; }
+
+  .outfit-card a.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #171410;
+    background: var(--brass);
+  }
+
+  .outfit-card a.btn:hover { background: var(--brass-soft); }
+
+  .no-results {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 14.5px;
+    padding: 40px 0;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="logo">Jugendar</span>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <ul class="nav-menu" id="navMenu">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="journey.html">Journey</a></li>
+    <li><a href="wardrobe.html" class="active">Wardrobe</a></li>
+  </ul>
+</nav>
+
+<header class="page-head">
+  <div class="kicker">Wardrobe</div>
+  <h1>My Outfits</h1>
+  <p>Every outfit I post lives here, tagged by hashtag. Search a tag to jump straight to that look.</p>
+
+  <div class="search-wrap">
+    <input type="text" id="wardrobeSearch" placeholder="Search by hashtag — e.g. #outfit1" autocomplete="off">
+    <div class="suggestions" id="suggestions"></div>
+  </div>
+  <div class="search-msg" id="searchMsg"></div>
+</header>
+
+<div class="gallery">
+  <div class="gallery-grid" id="galleryGrid">
+    <div class="outfit-card" data-tag="#outfit1" data-title="outfit #1 beachside printed shirt">
+      <img src="jugendar-look-1.jpg" alt="Jugendar wearing a printed shirt, black trousers, and black boots">
+      <div class="body">
+        <span class="tag">#outfit1</span>
+        <h3>Outfit #1 — Beachside, printed shirt</h3>
+        <p>Printed shirt, black trousers, black boots.</p>
+        <a class="btn" href="outfit-1.html">Shop this look</a>
+      </div>
+    </div>
+  </div>
+  <p class="no-results" id="noResults">No outfits match that hashtag.</p>
+</div>
+
+<script>
+  document.getElementById('navToggle').addEventListener('click', function () {
+    document.getElementById('navMenu').classList.toggle('open');
+  });
+
+  const cards = Array.from(document.querySelectorAll('.outfit-card'));
+  const outfits = cards.map(function (c) {
+    return { el: c, tag: c.getAttribute('data-tag'), title: c.getAttribute('data-title') };
+  });
+
+  const input = document.getElementById('wardrobeSearch');
+  const suggestionsBox = document.getElementById('suggestions');
+  const noResults = document.getElementById('noResults');
+  const searchMsg = document.getElementById('searchMsg');
+
+  function normalize(q) {
+    q = q.trim().toLowerCase();
+    if (q && !q.startsWith('#')) q = '#' + q;
+    return q;
+  }
+
+  function filterGallery(rawQuery) {
+    const q = normalize(rawQuery);
+    let visibleCount = 0;
+    outfits.forEach(function (o) {
+      const match = !q || o.tag.includes(q) || o.title.includes(rawQuery.trim().toLowerCase());
+      o.el.style.display = match ? '' : 'none';
+      if (match) visibleCount++;
+    });
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    searchMsg.textContent = '';
+  }
+
+  function renderSuggestions(rawQuery) {
+    const q = normalize(rawQuery);
+    if (!rawQuery.trim()) { suggestionsBox.classList.remove('open'); suggestionsBox.innerHTML = ''; return; }
+    const matches = outfits.filter(function (o) { return o.tag.includes(q); }).slice(0, 5);
+    if (matches.length === 0) { suggestionsBox.classList.remove('open'); suggestionsBox.innerHTML = ''; return; }
+    suggestionsBox.innerHTML = matches.map(function (o) {
+      return '<div data-tag="' + o.tag + '">' + o.tag + '</div>';
+    }).join('');
+    suggestionsBox.classList.add('open');
+    Array.from(suggestionsBox.children).forEach(function (item) {
+      item.addEventListener('click', function () {
+        input.value = item.getAttribute('data-tag');
+        suggestionsBox.classList.remove('open');
+        filterGallery(input.value);
+      });
+    });
+  }
+
+  input.addEventListener('input', function () {
+    filterGallery(input.value);
+    renderSuggestions(input.value);
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.search-wrap')) { suggestionsBox.classList.remove('open'); }
+  });
+</script>
+
+</body>
+</html>
