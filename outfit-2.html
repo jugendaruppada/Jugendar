@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outfit #2 — Jugendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #15130F;
+    --surface: #1D1A15;
+    --hairline: rgba(201, 161, 92, 0.22);
+    --brass: #C9A15C;
+    --brass-soft: #E3C989;
+    --rust: #A85C36;
+    --text: #ECE6D9;
+    --text-muted: #A79C89;
+    --text-dim: #756B5A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 0 0 60px;
+  }
+
+  h1, h2 { font-family: 'Fraunces', serif; font-weight: 500; letter-spacing: -0.01em; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav {
+    border-bottom: 1px solid var(--hairline);
+    position: relative;
+  }
+
+  nav .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  nav .logo { font-family: 'Fraunces', serif; font-size: 19px; color: var(--brass-soft); }
+
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  .nav-toggle span {
+    width: 22px;
+    height: 2px;
+    background: var(--brass-soft);
+    display: block;
+  }
+
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 64px;
+    right: 24px;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    list-style: none;
+    z-index: 60;
+  }
+
+  .nav-menu.open { display: block; }
+
+  .nav-menu li a {
+    display: block;
+    padding: 14px 22px;
+    font-size: 14px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .nav-menu li:last-child a { border-bottom: none; }
+  .nav-menu li a:hover, .nav-menu li a.active { color: var(--brass-soft); }
+
+  header.page-head {
+    text-align: center;
+    padding: 52px 24px 36px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  header.page-head .kicker {
+    color: var(--rust);
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+  }
+
+  header.page-head h1 { font-size: clamp(28px, 4.5vw, 42px); }
+  header.page-head p {
+    margin-top: 14px;
+    color: var(--text-muted);
+    max-width: 46ch;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 15.5px;
+  }
+
+  /* PHOTO + HOTSPOTS */
+  .look-stage {
+    position: relative;
+    max-width: 420px;
+    margin: 44px auto 8px;
+    border: 1px solid var(--hairline);
+  }
+
+  .look-stage img { width: 100%; height: auto; display: block; }
+
+  .hotspot {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--brass);
+    color: #171410;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 4px rgba(201,161,92,0.22);
+    animation: pulse 2.4s ease-in-out infinite;
+    text-decoration: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(201,161,92,0.22); }
+    50% { box-shadow: 0 0 0 9px rgba(201,161,92,0.08); }
+  }
+
+  .hotspot:hover { background: var(--brass-soft); }
+
+  .hs-cap   { top: 9%;  left: 42%; }
+  .hs-shirt { top: 32%; left: 58%; }
+  .hs-watch { top: 49%; left: 60%; }
+  .hs-shoes { top: 89%; left: 44%; }
+
+  /* GALLERY */
+  .gallery {
+    max-width: 900px;
+    margin: 40px auto 0;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .gallery { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .gallery img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border: 1px solid var(--hairline);
+    display: block;
+  }
+
+  /* PRODUCT GRID */
+  .products { margin-top: 44px; padding: 0 24px; }
+
+  .products-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  @media (min-width: 640px) {
+    .products-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .product-card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-margin-top: 20px;
+  }
+
+  .product-card .num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--brass);
+    color: #171410;
+    font-weight: 700;
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-card .thumb {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--hairline);
+  }
+
+  .product-card h3 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .product-card .links {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .product-card a.shop-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #171410;
+    background: var(--brass);
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .product-card a.shop-btn:hover { background: var(--brass-soft); }
+
+  .note {
+    max-width: 640px;
+    margin: 48px auto 0;
+    padding: 0 24px;
+    color: var(--text-dim);
+    font-size: 13.5px;
+    text-align: center;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="logo">Jugendar</span>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <ul class="nav-menu" id="navMenu">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="journey.html">Journey</a></li>
+    <li><a href="wardrobe.html" class="active">Wardrobe</a></li>
+  </ul>
+</nav>
+
+<header class="page-head">
+  <div class="kicker">Outfit #2</div>
+  <h1>Shop The Look</h1>
+  <p>Tap a pin on the photo, or a card below, to shop each piece.</p>
+</header>
+
+<div class="wrap">
+  <div class="look-stage">
+    <img src="jugendar-outfit2-c.jpg" alt="Jugendar wearing outfit 2 — cap, striped tee, white trousers, and sneakers">
+    <a href="#card-cap" class="hotspot hs-cap" title="Cap">1</a>
+    <a href="#card-shirt" class="hotspot hs-shirt" title="T-Shirt">2</a>
+    <a href="#card-watch" class="hotspot hs-watch" title="Watch">3</a>
+    <a href="#card-shoes" class="hotspot hs-shoes" title="Shoes">4</a>
+  </div>
+</div>
+
+<div class="gallery">
+  <img src="jugendar-outfit2-a.jpg" alt="Jugendar wearing outfit 2, side profile">
+  <img src="jugendar-outfit2-b.jpg" alt="Jugendar wearing outfit 2, front standing">
+  <img src="jugendar-outfit2-d.jpg" alt="Jugendar wearing outfit 2, front portrait">
+  <img src="jugendar-outfit2-e.jpg" alt="Close-up of glasses from outfit 2">
+</div>
+
+<div class="products">
+  <div class="products-grid">
+    <div class="product-card" id="card-cap">
+      <div class="num">1</div>
+      <img class="thumb" src="jugendar-outfit2-cap-crop.jpg" alt="Cropped view of the Jack & Jones cap">
+      <h3>Jack &amp; Jones Cap</h3>
+      <div class="links">
+        <a class="shop-btn" href="https://myntr.in/GrCNCq" target="_blank" rel="noopener">Myntra</a>
+      </div>
+    </div>
+    <div class="product-card" id="card-shirt">
+      <div class="num">2</div>
+      <img class="thumb" src="jugendar-outfit2-shirt-crop.jpg" alt="Cropped view of the H&amp;M oversized t-shirt">
+      <h3>Oversized T-Shirt — H&amp;M</h3>
+      <div class="links">
+        <a class="shop-btn" href="https://myntr.it/aLuB1Ze" target="_blank" rel="noopener">Myntra</a>
+      </div>
+    </div>
+    <div class="product-card" id="card-watch">
+      <div class="num">3</div>
+      <img class="thumb" src="jugendar-outfit2-watch-crop.jpg" alt="Cropped view of the Lacoste watch">
+      <h3>Lacoste Watch</h3>
+      <div class="links">
+        <a class="shop-btn" href="https://myntr.in/e9GIbg" target="_blank" rel="noopener">Myntra</a>
+        <a class="shop-btn" href="https://ajiio.co/QN9t76" target="_blank" rel="noopener">Ajio</a>
+      </div>
+    </div>
+    <div class="product-card" id="card-shoes">
+      <div class="num">4</div>
+      <img class="thumb" src="jugendar-outfit2-shoes-crop.jpg" alt="Cropped view of the Nike sneakers">
+      <h3>Nike Sneakers</h3>
+      <div class="links">
+        <a class="shop-btn" href="https://myntr.in/x6wmsQ" target="_blank" rel="noopener">Myntra</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="note">Tap any pin on the photo to jump to that item, or tap a card's shop button to open the affiliate link directly.</p>
+
+<script>
+  document.getElementById('navToggle').addEventListener('click', function () {
+    document.getElementById('navMenu').classList.toggle('open');
+  });
+</script>
+
+</body>
+</html>
