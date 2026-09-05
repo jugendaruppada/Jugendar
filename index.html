@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jugendar — Biodata</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #15130F;
-    --surface: #1D1A15;
-    --hairline: rgba(201, 161, 92, 0.22);
-    --brass: #C9A15C;
-    --brass-soft: #E3C989;
-    --rust: #A85C36;
-    --text: #ECE6D9;
-    --text-muted: #A79C89;
-    --text-dim: #756B5A;
+    --bg: #0A0A0C;
+    --surface: #16161A;
+    --hairline: rgba(255, 255, 255, 0.10);
+    --brass: #D6FF3D;
+    --brass-soft: #ECFF8F;
+    --rust: #4EA1FF;
+    --text: #F3F3F1;
+    --text-muted: #A6A6AC;
+    --text-dim: #6E6E74;
     --max-width: 880px;
   }
 
@@ -32,16 +32,22 @@
     padding-bottom: 70px;
   }
 
-  h1, h2, h3 { font-family: 'Fraunces', serif; letter-spacing: -0.01em; }
+  h1, h2, h3 { font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: -0.02em; }
   a { color: inherit; }
 
   .wrap { max-width: var(--max-width); margin: 0 auto; padding: 0 28px; }
   @media (max-width: 640px) { .wrap { padding: 0 20px; } body { font-size: 15.5px; } }
 
   /* NAV */
+  html { scroll-behavior: smooth; }
+
   nav {
     border-bottom: 1px solid var(--hairline);
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(21, 19, 15, 0.92);
+    backdrop-filter: blur(10px);
   }
 
   nav .wrap {
@@ -49,10 +55,12 @@
     align-items: center;
     justify-content: space-between;
     height: 64px;
-    max-width: var(--max-width);
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
   }
 
-  nav .logo { font-family: 'Fraunces', serif; font-size: 19px; color: var(--brass-soft); }
+  nav .logo { font-family: 'Fraunces', serif; font-style: italic; font-size: 19px; color: var(--brass-soft); }
 
   .nav-toggle {
     display: flex;
@@ -62,6 +70,7 @@
     border: none;
     cursor: pointer;
     padding: 8px;
+    z-index: 130;
   }
 
   .nav-toggle span {
@@ -69,88 +78,67 @@
     height: 2px;
     background: var(--brass-soft);
     display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
   }
+
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    z-index: 110;
+  }
+
+  .nav-overlay.open { opacity: 1; pointer-events: auto; }
 
   .nav-menu {
-    display: none;
-    position: absolute;
-    top: 64px;
+    position: fixed;
+    top: 0;
     right: 0;
-    min-width: 200px;
+    height: 100vh;
+    width: 78%;
+    max-width: 300px;
     background: var(--surface);
-    border: 1px solid var(--hairline);
+    border-left: 1px solid var(--hairline);
     list-style: none;
-    z-index: 60;
+    z-index: 120;
+    padding: 90px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .nav-menu.open { display: block; }
+  .nav-menu.open { transform: translateX(0); }
 
   .nav-menu li a {
     display: block;
-    padding: 14px 22px;
-    font-size: 14px;
+    padding: 16px 4px;
+    font-size: 16px;
     color: var(--text-muted);
     text-decoration: none;
     border-bottom: 1px solid var(--hairline);
+    transition: color 0.2s ease, padding-left 0.2s ease;
   }
 
   .nav-menu li:last-child a { border-bottom: none; }
-  .nav-menu li a:hover, .nav-menu li a.active { color: var(--brass-soft); }
+  .nav-menu li a:hover, .nav-menu li a.active { color: var(--brass-soft); padding-left: 10px; }
 
-  /* SEARCH */
-  .search-box {
-    padding: 28px 0;
-    border-bottom: 1px solid var(--hairline);
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
   }
 
-  .search-box form {
-    display: flex;
-    gap: 10px;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-
-  .search-box input {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    color: var(--text);
-    padding: 12px 16px;
-    font-family: 'Manrope', sans-serif;
-    font-size: 14.5px;
-  }
-
-  .search-box input::placeholder { color: var(--text-dim); }
-  .search-box input:focus { outline: none; border-color: var(--brass); }
-
-  .search-box button {
-    background: var(--brass);
-    color: #171410;
-    border: none;
-    padding: 0 22px;
-    font-size: 13.5px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .search-box button:hover { background: var(--brass-soft); }
-
-  .search-msg {
-    max-width: 480px;
-    margin: 10px auto 0;
-    font-size: 13px;
-    color: var(--text-dim);
-    text-align: center;
-    min-height: 16px;
-  }
-
-  .doc-section.search-hit {
-    border-color: var(--brass);
-    box-shadow: inset 0 0 0 1px var(--hairline), 0 0 0 1px var(--brass);
-    transition: box-shadow 0.3s ease;
-  }
-
-  /* HEADER */
+  .reveal.visible { opacity: 1; transform: translateY(0); }
   header.doc-head {
     padding: 64px 0 44px;
     border-bottom: 1px solid var(--hairline);
@@ -170,14 +158,7 @@
 
   header.doc-head .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  header.doc-head .kicker {
-    font-size: 12.5px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--rust);
-    margin-bottom: 8px;
-  }
+  header.doc-head .kicker { font-family: 'Fraunces', serif; font-style: italic; font-weight: 500; color: var(--rust); font-size: 15px; letter-spacing: 0; text-transform: none; margin-bottom: 10px; }
 
   header.doc-head h1 {
     font-size: clamp(28px, 4.4vw, 40px);
@@ -285,15 +266,17 @@
 
   .look-card a.btn {
     display: inline-block;
-    padding: 10px 20px;
+    padding: 11px 24px;
+    border-radius: 999px;
     font-size: 13px;
-    font-weight: 600;
-    color: #171410;
+    font-weight: 700;
+    color: #0A0A0C;
     background: var(--brass);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     text-decoration: none;
   }
 
-  .look-card a.btn:hover { background: var(--brass-soft); }
+  .look-card a.btn:hover { background: var(--brass-soft); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(214,255,61,0.28); }
 
   .fashion-more {
     margin-top: 20px;
@@ -304,6 +287,15 @@
   /* FOOTER */
   footer { padding: 48px 0 0; text-align: center; }
   footer p { color: var(--text-dim); font-size: 13px; }
+  .underline-draw {
+    width: 0;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--brass), var(--rust));
+    margin: 18px auto 0;
+    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .underline-draw.visible { width: 72px; }
 </style>
 </head>
 <body>
@@ -320,6 +312,7 @@
     <li><a href="journey.html">Journey</a></li>
     <li><a href="wardrobe.html">Wardrobe</a></li>
   </ul>
+  <div class="nav-overlay" id="navOverlay"></div>
 </nav>
 
 <div class="search-box">
@@ -337,11 +330,12 @@
     <div>
       <div class="kicker">Biodata</div>
       <h1>Jugendar</h1>
+      <span class="underline-draw reveal" style="margin: 12px 0 0;"></span>
       <div class="role">Student · Founder, Jugendar Portfolio</div>
     </div>
   </header>
 
-  <section class="doc-section">
+  <section class="doc-section reveal">
     <h2>Personal Details</h2>
     <table class="detail-table">
       <tr><td class="k">Full Name</td><td class="v">Jugendar</td></tr>
@@ -353,29 +347,29 @@
     </table>
   </section>
 
-  <section class="doc-section">
+  <section class="doc-section reveal">
     <h2>Education</h2>
 
-    <div class="edu-item">
+    <div class="edu-item reveal">
       <div class="stage">Schooling · Up to 10th</div>
       <h3>Chanakya Public School</h3>
       <p>Vizianagaram, Andhra Pradesh</p>
     </div>
 
-    <div class="edu-item">
+    <div class="edu-item reveal">
       <div class="stage">Intermediate</div>
       <h3>Sri Chaitanya, Sri Padha Campus</h3>
       <p>Dwarakanagar, Visakhapatnam, Andhra Pradesh</p>
     </div>
 
-    <div class="edu-item">
+    <div class="edu-item reveal">
       <div class="stage">Present · Undergraduate</div>
       <h3>MBBS, First Year</h3>
       <p>RIMS, Srikakulam, Andhra Pradesh</p>
     </div>
   </section>
 
-  <section class="doc-section">
+  <section class="doc-section reveal">
     <h2>Present Focus &amp; Aims</h2>
     <div class="prose">
       <p>Alongside first-year MBBS studies at RIMS Srikakulam, I'm <strong>building a small social media platform</strong> that helps local, offline businesses in Srikakulam get discovered — giving small shops and traders the visibility they've never had online.</p>
@@ -383,7 +377,7 @@
     </div>
   </section>
 
-  <section class="doc-section">
+  <section class="doc-section reveal">
     <h2>Hobbies &amp; Interests</h2>
     <div class="prose">
       <p>I like <strong>learning something new</strong> whenever I can, and I try to grow and improve myself a little every day. I also enjoy <strong>listening to movies</strong> in the background as a way to unwind.</p>
@@ -396,16 +390,24 @@
     </div>
   </section>
 
-  <section class="doc-section">
+  <section class="doc-section reveal">
     <h2>Fashion &amp; Style</h2>
     <p class="fashion-intro">One of my growing interests is developing an eye for fashion — I document outfits I wear and share where each piece is from, including affiliate links for anyone who wants the same look.</p>
 
-    <div class="look-card">
+    <div class="look-card reveal">
       <img src="jugendar-look-1.jpg" alt="Jugendar wearing a printed shirt, black trousers, and black boots">
       <div class="body">
         <h3>Outfit #1 — Beachside, printed shirt</h3>
         <p>Printed shirt, black trousers, black boots — full breakdown and shopping links on the look page.</p>
         <a class="btn" href="outfit-1.html">Shop this look</a>
+      </div>
+    </div>
+    <div class="look-card reveal" style="margin-top: 18px;">
+      <img src="jugendar-outfit2-c.jpg" alt="Jugendar wearing a cap, striped t-shirt, white trousers, and sneakers">
+      <div class="body">
+        <h3>Outfit #2 — Cap &amp; striped tee</h3>
+        <p>Jack &amp; Jones cap, H&amp;M tee, Lacoste watch, Nike sneakers — full breakdown and shopping links on the look page.</p>
+        <a class="btn" href="outfit-2.html">Shop this look</a>
       </div>
     </div>
     <p class="fashion-more">More outfits will be added here as I post them.</p>
@@ -418,9 +420,40 @@
 </div>
 
 <script>
-  document.getElementById('navToggle').addEventListener('click', function () {
-    document.getElementById('navMenu').classList.toggle('open');
+  const navToggle = document.getElementById('navToggle');
+  const navMenu = document.getElementById('navMenu');
+  const navOverlay = document.getElementById('navOverlay');
+
+  function closeNav() {
+    navMenu.classList.remove('open');
+    navOverlay.classList.remove('open');
+    navToggle.classList.remove('open');
+  }
+
+  navToggle.addEventListener('click', function () {
+    const isOpen = navMenu.classList.toggle('open');
+    navOverlay.classList.toggle('open', isOpen);
+    navToggle.classList.toggle('open', isOpen);
   });
+
+  navOverlay.addEventListener('click', closeNav);
+  navMenu.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', closeNav);
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if (revealEls.length) {
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function (el) { io.observe(el); });
+  }
 
   function runBioSearch() {
     const q = document.getElementById('bioSearchInput').value.trim().toLowerCase();

@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Outfit #2 — Jugendar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #15130F;
-    --surface: #1D1A15;
-    --hairline: rgba(201, 161, 92, 0.22);
-    --brass: #C9A15C;
-    --brass-soft: #E3C989;
-    --rust: #A85C36;
-    --text: #ECE6D9;
-    --text-muted: #A79C89;
-    --text-dim: #756B5A;
+    --bg: #0A0A0C;
+    --surface: #16161A;
+    --hairline: rgba(255, 255, 255, 0.10);
+    --brass: #D6FF3D;
+    --brass-soft: #ECFF8F;
+    --rust: #4EA1FF;
+    --text: #F3F3F1;
+    --text-muted: #A6A6AC;
+    --text-dim: #6E6E74;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,14 +29,20 @@
     padding: 0 0 60px;
   }
 
-  h1, h2 { font-family: 'Fraunces', serif; font-weight: 500; letter-spacing: -0.01em; }
+  h1, h2 { font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: -0.02em; }
 
   .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 
   /* NAV */
+  html { scroll-behavior: smooth; }
+
   nav {
     border-bottom: 1px solid var(--hairline);
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(21, 19, 15, 0.92);
+    backdrop-filter: blur(10px);
   }
 
   nav .wrap {
@@ -49,7 +55,7 @@
     padding: 0 24px;
   }
 
-  nav .logo { font-family: 'Fraunces', serif; font-size: 19px; color: var(--brass-soft); }
+  nav .logo { font-family: 'Fraunces', serif; font-style: italic; font-size: 19px; color: var(--brass-soft); }
 
   .nav-toggle {
     display: flex;
@@ -59,6 +65,7 @@
     border: none;
     cursor: pointer;
     padding: 8px;
+    z-index: 130;
   }
 
   .nav-toggle span {
@@ -66,47 +73,74 @@
     height: 2px;
     background: var(--brass-soft);
     display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
   }
+
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    z-index: 110;
+  }
+
+  .nav-overlay.open { opacity: 1; pointer-events: auto; }
 
   .nav-menu {
-    display: none;
-    position: absolute;
-    top: 64px;
-    right: 24px;
-    min-width: 200px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 78%;
+    max-width: 300px;
     background: var(--surface);
-    border: 1px solid var(--hairline);
+    border-left: 1px solid var(--hairline);
     list-style: none;
-    z-index: 60;
+    z-index: 120;
+    padding: 90px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .nav-menu.open { display: block; }
+  .nav-menu.open { transform: translateX(0); }
 
   .nav-menu li a {
     display: block;
-    padding: 14px 22px;
-    font-size: 14px;
+    padding: 16px 4px;
+    font-size: 16px;
     color: var(--text-muted);
     text-decoration: none;
     border-bottom: 1px solid var(--hairline);
+    transition: color 0.2s ease, padding-left 0.2s ease;
   }
 
   .nav-menu li:last-child a { border-bottom: none; }
-  .nav-menu li a:hover, .nav-menu li a.active { color: var(--brass-soft); }
+  .nav-menu li a:hover, .nav-menu li a.active { color: var(--brass-soft); padding-left: 10px; }
 
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
   header.page-head {
     text-align: center;
     padding: 52px 24px 36px;
     border-bottom: 1px solid var(--hairline);
   }
 
-  header.page-head .kicker {
-    color: var(--rust);
-    font-size: 13.5px;
-    font-weight: 600;
-    margin-bottom: 14px;
-    letter-spacing: 0.02em;
-  }
+  header.page-head .kicker { font-family: 'Fraunces', serif; font-style: italic; font-weight: 500; color: var(--rust); font-size: 15px; letter-spacing: 0; text-transform: none; margin-bottom: 10px; }
 
   header.page-head h1 { font-size: clamp(28px, 4.5vw, 42px); }
   header.page-head p {
@@ -118,15 +152,84 @@
     font-size: 15.5px;
   }
 
-  /* PHOTO + HOTSPOTS */
-  .look-stage {
-    position: relative;
-    max-width: 420px;
-    margin: 44px auto 8px;
-    border: 1px solid var(--hairline);
+  /* SHIMMER TEXT */
+  .shimmer-text {
+    background: linear-gradient(90deg, var(--brass) 0%, var(--rust) 25%, var(--brass-soft) 50%, var(--rust) 75%, var(--brass) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmerMove 6s linear infinite;
   }
 
-  .look-stage img { width: 100%; height: auto; display: block; }
+  @keyframes shimmerMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  /* PRODUCT GALLERY (main + thumbs) */
+  .product-gallery { max-width: 480px; margin: 44px auto 0; }
+
+  .gallery-main {
+    position: relative;
+    border: 1px solid var(--hairline);
+    overflow: hidden;
+    background: var(--surface);
+    aspect-ratio: 3 / 4;
+  }
+
+  .gallery-main img.glide {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: zoom-in;
+  }
+
+  .gallery-main img.glide.fading { opacity: 0; transform: scale(1.04); }
+
+  .hotspot-layer { position: absolute; inset: 0; transition: opacity 0.3s ease; }
+  .hotspot-layer.hidden { opacity: 0; pointer-events: none; }
+
+  .zoom-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(10,10,12,0.6);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--hairline);
+    color: var(--brass-soft);
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .gallery-thumbs {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .gallery-thumbs .thumb {
+    width: 62px;
+    height: 78px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    opacity: 0.6;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  }
+
+  .gallery-thumbs .thumb:hover { opacity: 0.9; transform: translateY(-2px); }
+  .gallery-thumbs .thumb.active { opacity: 1; border-color: var(--brass); }
 
   .hotspot {
     position: absolute;
@@ -134,7 +237,7 @@
     height: 30px;
     border-radius: 50%;
     background: var(--brass);
-    color: #171410;
+    color: #0A0A0C;
     font-family: 'Manrope', sans-serif;
     font-weight: 700;
     font-size: 13px;
@@ -144,14 +247,14 @@
     transform: translate(-50%, -50%);
     cursor: pointer;
     border: 2px solid var(--bg);
-    box-shadow: 0 0 0 4px rgba(201,161,92,0.22);
+    box-shadow: 0 0 0 4px rgba(214,255,61,0.22);
     animation: pulse 2.4s ease-in-out infinite;
     text-decoration: none;
   }
 
   @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 4px rgba(201,161,92,0.22); }
-    50% { box-shadow: 0 0 0 9px rgba(201,161,92,0.08); }
+    0%, 100% { box-shadow: 0 0 0 4px rgba(214,255,61,0.22); }
+    50% { box-shadow: 0 0 0 9px rgba(214,255,61,0.08); }
   }
 
   .hotspot:hover { background: var(--brass-soft); }
@@ -161,26 +264,97 @@
   .hs-watch { top: 49%; left: 60%; }
   .hs-shoes { top: 89%; left: 44%; }
 
-  /* GALLERY */
-  .gallery {
-    max-width: 900px;
-    margin: 40px auto 0;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+  /* LIGHTBOX */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.96);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
-  @media (min-width: 640px) {
-    .gallery { grid-template-columns: repeat(4, 1fr); }
+  .lightbox.open { display: flex; opacity: 1; }
+
+  .lb-stage {
+    max-width: 92vw;
+    max-height: 78vh;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: pinch-zoom;
   }
 
-  .gallery img {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
+  .lb-stage img.glide {
+    max-width: 92vw;
+    max-height: 78vh;
+    object-fit: contain;
     border: 1px solid var(--hairline);
-    display: block;
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: zoom-in;
+    transform: scale(1);
+    transform-origin: center;
+  }
+
+  .lb-stage img.glide.fading { opacity: 0; }
+  .lb-stage img.glide.zoomed { cursor: zoom-out; transform: scale(2); max-width: none; max-height: none; }
+
+  .lb-close, .lb-nav {
+    position: absolute;
+    background: none;
+    border: none;
+    color: var(--brass-soft);
+    cursor: pointer;
+  }
+
+  .lb-close {
+    top: 22px;
+    right: 26px;
+    font-size: 34px;
+    line-height: 1;
+    z-index: 5;
+  }
+
+  .lb-nav {
+    font-size: 42px;
+    top: 42%;
+    transform: translateY(-50%);
+    padding: 10px 16px;
+    z-index: 5;
+  }
+
+  .lb-prev { left: 6px; }
+  .lb-next { right: 6px; }
+
+  .lb-thumbs {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+    max-width: 92vw;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .lb-thumbs img {
+    width: 54px;
+    height: 68px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    opacity: 0.55;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity 0.25s ease, border-color 0.25s ease;
+  }
+
+  .lb-thumbs img.active { opacity: 1; border-color: var(--brass); }
+
+  @media (max-width: 640px) {
+    .lb-nav { font-size: 32px; padding: 8px 10px; }
   }
 
   /* PRODUCT GRID */
@@ -213,7 +387,7 @@
     height: 26px;
     border-radius: 50%;
     background: var(--brass);
-    color: #171410;
+    color: #0A0A0C;
     font-weight: 700;
     font-size: 12.5px;
     display: flex;
@@ -244,16 +418,17 @@
   .product-card a.shop-btn {
     flex: 1;
     text-align: center;
-    padding: 10px 12px;
+    padding: 11px 12px;
+    border-radius: 999px;
     font-size: 12.5px;
-    font-weight: 600;
-    color: #171410;
+    font-weight: 700;
+    color: #0A0A0C;
     background: var(--brass);
     text-decoration: none;
-    transition: background 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   }
 
-  .product-card a.shop-btn:hover { background: var(--brass-soft); }
+  .product-card a.shop-btn:hover { background: var(--brass-soft); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(214,255,61,0.28); }
 
   .note {
     max-width: 640px;
@@ -264,6 +439,16 @@
     text-align: center;
     line-height: 1.6;
   }
+
+  .underline-draw {
+    width: 0;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--brass), var(--rust));
+    margin: 18px auto 0;
+    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .underline-draw.visible { width: 72px; }
 </style>
 </head>
 <body>
@@ -280,29 +465,46 @@
     <li><a href="journey.html">Journey</a></li>
     <li><a href="wardrobe.html" class="active">Wardrobe</a></li>
   </ul>
+  <div class="nav-overlay" id="navOverlay"></div>
 </nav>
 
 <header class="page-head">
   <div class="kicker">Outfit #2</div>
-  <h1>Shop The Look</h1>
-  <p>Tap a pin on the photo, or a card below, to shop each piece.</p>
+  <h1 class="shimmer-text">Shop The Look</h1>
+  <span class="underline-draw reveal"></span>
+  <p>Tap a pin on the photo to shop a piece, or browse every angle below.</p>
 </header>
 
 <div class="wrap">
-  <div class="look-stage">
-    <img src="jugendar-outfit2-c.jpg" alt="Jugendar wearing outfit 2 — cap, striped tee, white trousers, and sneakers">
-    <a href="#card-cap" class="hotspot hs-cap" title="Cap">1</a>
-    <a href="#card-shirt" class="hotspot hs-shirt" title="T-Shirt">2</a>
-    <a href="#card-watch" class="hotspot hs-watch" title="Watch">3</a>
-    <a href="#card-shoes" class="hotspot hs-shoes" title="Shoes">4</a>
+  <div class="product-gallery reveal">
+    <div class="gallery-main" id="galleryMain">
+      <img id="mainImage" src="jugendar-outfit2-c.jpg" alt="Jugendar wearing outfit 2 — cap, striped tee, white trousers, and sneakers" class="glide">
+      <div class="hotspot-layer" id="hotspotLayer">
+        <a href="#card-cap" class="hotspot hs-cap" title="Cap">1</a>
+        <a href="#card-shirt" class="hotspot hs-shirt" title="T-Shirt">2</a>
+        <a href="#card-watch" class="hotspot hs-watch" title="Watch">3</a>
+        <a href="#card-shoes" class="hotspot hs-shoes" title="Shoes">4</a>
+      </div>
+      <button class="zoom-btn" id="zoomBtn" aria-label="Zoom">&#128269;</button>
+    </div>
+    <div class="gallery-thumbs" id="galleryThumbs">
+      <img src="jugendar-outfit2-c.jpg" class="thumb active" data-index="0" alt="Thumbnail 1">
+      <img src="jugendar-outfit2-a.jpg" class="thumb" data-index="1" alt="Thumbnail 2">
+      <img src="jugendar-outfit2-b.jpg" class="thumb" data-index="2" alt="Thumbnail 3">
+      <img src="jugendar-outfit2-d.jpg" class="thumb" data-index="3" alt="Thumbnail 4">
+      <img src="jugendar-outfit2-e.jpg" class="thumb" data-index="4" alt="Thumbnail 5">
+    </div>
   </div>
 </div>
 
-<div class="gallery">
-  <img src="jugendar-outfit2-a.jpg" alt="Jugendar wearing outfit 2, side profile">
-  <img src="jugendar-outfit2-b.jpg" alt="Jugendar wearing outfit 2, front standing">
-  <img src="jugendar-outfit2-d.jpg" alt="Jugendar wearing outfit 2, front portrait">
-  <img src="jugendar-outfit2-e.jpg" alt="Close-up of glasses from outfit 2">
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose" aria-label="Close">&times;</button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">&#8249;</button>
+  <div class="lb-stage" id="lbStage">
+    <img id="lbImage" src="" alt="" class="glide">
+  </div>
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next">&#8250;</button>
+  <div class="lb-thumbs" id="lbThumbs"></div>
 </div>
 
 <div class="products">
@@ -346,9 +548,150 @@
 <p class="note">Tap any pin on the photo to jump to that item, or tap a card's shop button to open the affiliate link directly.</p>
 
 <script>
-  document.getElementById('navToggle').addEventListener('click', function () {
-    document.getElementById('navMenu').classList.toggle('open');
+  const navToggle = document.getElementById('navToggle');
+  const navMenu = document.getElementById('navMenu');
+  const navOverlay = document.getElementById('navOverlay');
+
+  function closeNav() {
+    navMenu.classList.remove('open');
+    navOverlay.classList.remove('open');
+    navToggle.classList.remove('open');
+  }
+
+  navToggle.addEventListener('click', function () {
+    const isOpen = navMenu.classList.toggle('open');
+    navOverlay.classList.toggle('open', isOpen);
+    navToggle.classList.toggle('open', isOpen);
   });
+
+  navOverlay.addEventListener('click', closeNav);
+  navMenu.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', closeNav);
+  });
+
+  // Gallery images (shared by main stage + lightbox)
+  const galleryImages = [
+    { src: 'jugendar-outfit2-c.jpg', alt: 'Jugendar wearing outfit 2, sitting' },
+    { src: 'jugendar-outfit2-a.jpg', alt: 'Jugendar wearing outfit 2, side profile' },
+    { src: 'jugendar-outfit2-b.jpg', alt: 'Jugendar wearing outfit 2, front standing' },
+    { src: 'jugendar-outfit2-d.jpg', alt: 'Jugendar wearing outfit 2, front portrait' },
+    { src: 'jugendar-outfit2-e.jpg', alt: 'Close-up of glasses from outfit 2' }
+  ];
+
+  // Main inline gallery
+  let mainIndex = 0;
+  const mainImage = document.getElementById('mainImage');
+  const hotspotLayer = document.getElementById('hotspotLayer');
+  const thumbs = Array.from(document.querySelectorAll('#galleryThumbs .thumb'));
+
+  function setMainImage(index) {
+    if (index === mainIndex) return;
+    mainIndex = index;
+    mainImage.classList.add('fading');
+    hotspotLayer.classList.toggle('hidden', index !== 0);
+    setTimeout(function () {
+      mainImage.src = galleryImages[index].src;
+      mainImage.alt = galleryImages[index].alt;
+      mainImage.classList.remove('fading');
+    }, 220);
+    thumbs.forEach(function (t, i) { t.classList.toggle('active', i === index); });
+  }
+
+  thumbs.forEach(function (t) {
+    t.addEventListener('click', function () { setMainImage(parseInt(t.dataset.index, 10)); });
+  });
+
+  mainImage.addEventListener('click', function () { openLightbox(mainIndex); });
+  document.getElementById('zoomBtn').addEventListener('click', function () { openLightbox(mainIndex); });
+
+  // Lightbox
+  let lbIndex = 0;
+  const lightbox = document.getElementById('lightbox');
+  const lbImage = document.getElementById('lbImage');
+  const lbThumbsWrap = document.getElementById('lbThumbs');
+
+  galleryImages.forEach(function (img, i) {
+    const t = document.createElement('img');
+    t.src = img.src;
+    t.alt = img.alt;
+    t.dataset.index = i;
+    t.addEventListener('click', function () { showLightboxImage(i); });
+    lbThumbsWrap.appendChild(t);
+  });
+
+  function updateLbThumbs() {
+    Array.from(lbThumbsWrap.children).forEach(function (t, i) {
+      t.classList.toggle('active', i === lbIndex);
+    });
+  }
+
+  function showLightboxImage(index) {
+    lbIndex = index;
+    lbImage.classList.add('fading');
+    lbImage.classList.remove('zoomed');
+    setTimeout(function () {
+      lbImage.src = galleryImages[lbIndex].src;
+      lbImage.alt = galleryImages[lbIndex].alt;
+      lbImage.classList.remove('fading');
+    }, 200);
+    updateLbThumbs();
+  }
+
+  window.openLightbox = function (index) {
+    showLightboxImage(index);
+    lightbox.classList.add('open');
+  };
+
+  function closeLightbox() { lightbox.classList.remove('open'); lbImage.classList.remove('zoomed'); }
+
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.getElementById('lbPrev').addEventListener('click', function () {
+    showLightboxImage((lbIndex - 1 + galleryImages.length) % galleryImages.length);
+  });
+  document.getElementById('lbNext').addEventListener('click', function () {
+    showLightboxImage((lbIndex + 1) % galleryImages.length);
+  });
+  lbImage.addEventListener('click', function (e) {
+    e.stopPropagation();
+    lbImage.classList.toggle('zoomed');
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
+    if (e.key === 'ArrowRight') document.getElementById('lbNext').click();
+  });
+
+  // Smooth outbound transition for affiliate links
+  document.querySelectorAll('a.shop-btn').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      const url = a.getAttribute('href');
+      a.style.transform = 'scale(0.96)';
+      a.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
+      a.style.boxShadow = '0 4px 18px rgba(214,255,61,0.4)';
+      setTimeout(function () {
+        window.open(url, '_blank', 'noopener');
+        a.style.transform = '';
+      }, 160);
+    });
+  });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  if (revealEls.length) {
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function (el) { io.observe(el); });
+  }
 </script>
 
 </body>
