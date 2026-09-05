@@ -41,6 +41,7 @@
   /* NAV */
   nav {
     border-bottom: 1px solid var(--hairline);
+    position: relative;
   }
 
   nav .wrap {
@@ -53,14 +54,48 @@
 
   nav .logo { font-family: 'Fraunces', serif; font-size: 19px; color: var(--brass-soft); }
 
-  nav ul { display: flex; gap: 30px; list-style: none; }
-  nav ul li a { font-size: 13.5px; color: var(--text-muted); text-decoration: none; transition: color 0.2s ease; }
-  nav ul li a:hover, nav ul li a.active { color: var(--brass-soft); }
-
-  @media (max-width: 560px) {
-    nav ul { gap: 18px; }
-    nav ul li a { font-size: 12.5px; }
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
   }
+
+  .nav-toggle span {
+    width: 22px;
+    height: 2px;
+    background: var(--brass-soft);
+    display: block;
+  }
+
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 64px;
+    right: 0;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    list-style: none;
+    z-index: 60;
+  }
+
+  .nav-menu.open { display: block; }
+
+  .nav-menu li a {
+    display: block;
+    padding: 14px 22px;
+    font-size: 14px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .nav-menu li:last-child a { border-bottom: none; }
+  .nav-menu li a:hover, .nav-menu li a.active { color: var(--brass-soft); }
 
   /* HERO */
   .hero {
@@ -200,12 +235,15 @@
 <nav>
   <div class="wrap">
     <span class="logo">Jugendar</span>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="journey.html" class="active">Journey</a></li>
-      <li><a href="shop-the-look.html">Wardrobe</a></li>
-    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+  <ul class="nav-menu" id="navMenu">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="journey.html" class="active">Journey</a></li>
+    <li><a href="wardrobe.html">Wardrobe</a></li>
+  </ul>
 </nav>
 
 <header class="hero">
@@ -261,9 +299,9 @@
       <div class="look-card">
         <img src="jugendar-look-1.jpg" alt="Jugendar wearing a printed shirt, black trousers, and black boots">
         <div class="body">
-          <h3>Beachside, printed shirt</h3>
+          <h3>Outfit #1 — Beachside, printed shirt</h3>
           <p>Printed shirt, black trousers, black boots.</p>
-          <a class="btn" href="shop-the-look.html">Shop this look</a>
+          <a class="btn" href="outfit-1.html">Shop this look</a>
         </div>
       </div>
     </div>
@@ -276,6 +314,12 @@
     <p>© 2026 Jugendar — Personal Journey</p>
   </div>
 </footer>
+
+<script>
+  document.getElementById('navToggle').addEventListener('click', function () {
+    document.getElementById('navMenu').classList.toggle('open');
+  });
+</script>
 
 </body>
 </html>
