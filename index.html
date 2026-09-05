@@ -41,6 +41,7 @@
   /* NAV */
   nav {
     border-bottom: 1px solid var(--hairline);
+    position: relative;
   }
 
   nav .wrap {
@@ -53,13 +54,100 @@
 
   nav .logo { font-family: 'Fraunces', serif; font-size: 19px; color: var(--brass-soft); }
 
-  nav ul { display: flex; gap: 30px; list-style: none; }
-  nav ul li a { font-size: 13.5px; color: var(--text-muted); text-decoration: none; transition: color 0.2s ease; }
-  nav ul li a:hover, nav ul li a.active { color: var(--brass-soft); }
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
 
-  @media (max-width: 560px) {
-    nav ul { gap: 18px; }
-    nav ul li a { font-size: 12.5px; }
+  .nav-toggle span {
+    width: 22px;
+    height: 2px;
+    background: var(--brass-soft);
+    display: block;
+  }
+
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 64px;
+    right: 0;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    list-style: none;
+    z-index: 60;
+  }
+
+  .nav-menu.open { display: block; }
+
+  .nav-menu li a {
+    display: block;
+    padding: 14px 22px;
+    font-size: 14px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .nav-menu li:last-child a { border-bottom: none; }
+  .nav-menu li a:hover, .nav-menu li a.active { color: var(--brass-soft); }
+
+  /* SEARCH */
+  .search-box {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .search-box form {
+    display: flex;
+    gap: 10px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .search-box input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    color: var(--text);
+    padding: 12px 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14.5px;
+  }
+
+  .search-box input::placeholder { color: var(--text-dim); }
+  .search-box input:focus { outline: none; border-color: var(--brass); }
+
+  .search-box button {
+    background: var(--brass);
+    color: #171410;
+    border: none;
+    padding: 0 22px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .search-box button:hover { background: var(--brass-soft); }
+
+  .search-msg {
+    max-width: 480px;
+    margin: 10px auto 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+    min-height: 16px;
+  }
+
+  .doc-section.search-hit {
+    border-color: var(--brass);
+    box-shadow: inset 0 0 0 1px var(--hairline), 0 0 0 1px var(--brass);
+    transition: box-shadow 0.3s ease;
   }
 
   /* HEADER */
@@ -223,13 +311,24 @@
 <nav>
   <div class="wrap">
     <span class="logo">Jugendar</span>
-    <ul>
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="journey.html">Journey</a></li>
-      <li><a href="shop-the-look.html">Wardrobe</a></li>
-    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+  <ul class="nav-menu" id="navMenu">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="journey.html">Journey</a></li>
+    <li><a href="wardrobe.html">Wardrobe</a></li>
+  </ul>
 </nav>
+
+<div class="search-box">
+  <form id="bioSearchForm" onsubmit="return false;">
+    <input type="text" id="bioSearchInput" placeholder="Search my data — e.g. education, hobbies, aims">
+    <button type="submit" id="bioSearchBtn">Search</button>
+  </form>
+  <div class="search-msg" id="bioSearchMsg"></div>
+</div>
 
 <div class="wrap">
 
@@ -304,9 +403,9 @@
     <div class="look-card">
       <img src="jugendar-look-1.jpg" alt="Jugendar wearing a printed shirt, black trousers, and black boots">
       <div class="body">
-        <h3>Beachside, printed shirt</h3>
+        <h3>Outfit #1 — Beachside, printed shirt</h3>
         <p>Printed shirt, black trousers, black boots — full breakdown and shopping links on the look page.</p>
-        <a class="btn" href="shop-the-look.html">Shop this look</a>
+        <a class="btn" href="outfit-1.html">Shop this look</a>
       </div>
     </div>
     <p class="fashion-more">More outfits will be added here as I post them.</p>
@@ -317,6 +416,34 @@
   </footer>
 
 </div>
+
+<script>
+  document.getElementById('navToggle').addEventListener('click', function () {
+    document.getElementById('navMenu').classList.toggle('open');
+  });
+
+  function runBioSearch() {
+    const q = document.getElementById('bioSearchInput').value.trim().toLowerCase();
+    const sections = document.querySelectorAll('.doc-section');
+    const msg = document.getElementById('bioSearchMsg');
+    sections.forEach(function (s) { s.classList.remove('search-hit'); });
+    if (!q) { msg.textContent = ''; return; }
+    let found = null;
+    sections.forEach(function (s) {
+      if (!found && s.innerText.toLowerCase().includes(q)) { found = s; }
+    });
+    if (found) {
+      found.classList.add('search-hit');
+      found.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      msg.textContent = '';
+    } else {
+      msg.textContent = 'No matching results found.';
+    }
+  }
+
+  document.getElementById('bioSearchForm').addEventListener('submit', runBioSearch);
+  document.getElementById('bioSearchBtn').addEventListener('click', runBioSearch);
+</script>
 
 </body>
 </html>
