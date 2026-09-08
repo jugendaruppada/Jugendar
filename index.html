@@ -256,7 +256,7 @@
     .look-card { grid-template-columns: 1fr; }
   }
 
-  .look-card img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 160px; }
+  .look-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
 
   .look-card .body { padding: 20px 20px 20px 0; }
   @media (max-width: 560px) { .look-card .body { padding: 0 18px 18px; } }
@@ -277,6 +277,111 @@
   }
 
   .look-card a.btn:hover { background: var(--brass-soft); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(214,255,61,0.28); }
+
+  /* EDITING SHOWCASE */
+  .edit-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  @media (min-width: 640px) {
+    .edit-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .edit-card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    overflow: hidden;
+    cursor: pointer;
+    animation: floatCard 5s ease-in-out infinite;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .edit-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+
+  .edit-card:nth-child(2) { animation-delay: 1.4s; }
+
+  @keyframes floatCard {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .edit-thumb-wrap { position: relative; }
+
+  .edit-thumb-wrap img {
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    display: block;
+    background: #000;
+  }
+
+  .play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: rgba(10,10,12,0.55);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--brass-soft);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 4px;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .edit-card:hover .play-btn { transform: translate(-50%, -50%) scale(1.1); background: rgba(10,10,12,0.75); }
+
+  .edit-card .body { padding: 16px 18px; }
+  .edit-card h3 { font-size: 15.5px; color: var(--text); margin-bottom: 4px; font-weight: 600; }
+  .edit-card p { color: var(--text-muted); font-size: 13.5px; }
+
+  .video-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.96);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .video-modal.open { display: flex; opacity: 1; }
+
+  .video-modal video {
+    max-width: 92vw;
+    max-height: 86vh;
+    border: 1px solid var(--hairline);
+  }
+
+  .vm-close {
+    position: absolute;
+    top: 22px;
+    right: 26px;
+    font-size: 34px;
+    line-height: 1;
+    background: none;
+    border: none;
+    color: var(--brass-soft);
+    cursor: pointer;
+    z-index: 5;
+  }
+
+  .edit-cta {
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  .edit-cta p { color: var(--text-muted); font-size: 14.5px; margin-bottom: 14px; }
 
   .fashion-more {
     margin-top: 20px;
@@ -302,7 +407,7 @@
 
 <nav>
   <div class="wrap">
-    <span class="logo">Jugendar</span>
+    <a href="index.html" class="logo">Jugendar</a>
     <button class="nav-toggle" id="navToggle" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -387,6 +492,7 @@
       <span>Tech &amp; new updates</span>
       <span>Photography</span>
       <span>Fashion &amp; style</span>
+      <a href="#editing" style="text-decoration:none;"><span>Video Editing</span></a>
     </div>
   </section>
 
@@ -421,6 +527,42 @@
     <p class="fashion-more">More outfits will be added here as I post them.</p>
   </section>
 
+  <section class="doc-section reveal" id="editing">
+    <h2>Video Editing</h2>
+    <p class="fashion-intro">Beyond fashion, I edit videos — reels, promos, and short-form content. Tap a thumbnail to watch with sound. Interested in having me edit for you? Reach out using the details below.</p>
+    <div class="edit-grid">
+      <div class="edit-card reveal" onclick="openEditVideo(0)">
+        <div class="edit-thumb-wrap">
+          <img src="jugendar-edit-1-poster.png" alt="The Dark Triad — edit thumbnail">
+          <span class="play-btn">&#9658;</span>
+        </div>
+        <div class="body">
+          <h3>The Dark Triad</h3>
+          <p>Tap to play with sound.</p>
+        </div>
+      </div>
+      <div class="edit-card reveal" onclick="openEditVideo(1)">
+        <div class="edit-thumb-wrap">
+          <img src="jugendar-edit-2-poster.png" alt="The Ivory Standard — edit thumbnail">
+          <span class="play-btn">&#9658;</span>
+        </div>
+        <div class="body">
+          <h3>The Ivory Standard</h3>
+          <p>Tap to play with sound.</p>
+        </div>
+      </div>
+    </div>
+    <div class="edit-cta">
+      <p>Looking for an editor for your reels or promos?</p>
+      <a class="btn" href="mailto:Jugendaruppada@gmail.com" style="display:inline-block; padding:11px 24px; border-radius:999px; font-size:13px; font-weight:700; color:#0A0A0C; background:var(--brass);">Get in touch</a>
+    </div>
+  </section>
+
+  <div class="video-modal" id="videoModal">
+    <button class="vm-close" id="vmClose" aria-label="Close">&times;</button>
+    <video id="vmVideo" controls playsinline></video>
+  </div>
+
   <footer>
     <p>© 2026 Jugendar</p>
   </footer>
@@ -447,6 +589,34 @@
   navOverlay.addEventListener('click', closeNav);
   navMenu.querySelectorAll('a').forEach(function (a) {
     a.addEventListener('click', closeNav);
+  });
+
+  // Editing video modal
+  const editVideos = [
+    { src: 'jugendar-edit-1.mp4' },
+    { src: 'jugendar-edit-2.mp4' }
+  ];
+  const videoModal = document.getElementById('videoModal');
+  const vmVideo = document.getElementById('vmVideo');
+
+  window.openEditVideo = function (index) {
+    vmVideo.src = editVideos[index].src;
+    videoModal.classList.add('open');
+    vmVideo.play();
+  };
+
+  function closeVideoModal() {
+    videoModal.classList.remove('open');
+    vmVideo.pause();
+    vmVideo.currentTime = 0;
+  }
+
+  document.getElementById('vmClose').addEventListener('click', closeVideoModal);
+  videoModal.addEventListener('click', function (e) {
+    if (e.target === videoModal) closeVideoModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (videoModal.classList.contains('open') && e.key === 'Escape') closeVideoModal();
   });
 
   // Scroll reveal
