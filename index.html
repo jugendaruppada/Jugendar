@@ -796,6 +796,7 @@
   document.getElementById('bioSearchBtn').addEventListener('click', runBioSearch);
 
   // Auth + Comments
+  document.addEventListener('DOMContentLoaded', function () {
   const PAGE_ID = "index";
   const loginBtn = document.getElementById('loginBtn');
   const userChip = document.getElementById('userChip');
@@ -909,6 +910,7 @@
       }, function (err) { console.error('Comments error:', err); });
   }
 
+  });
 </script>
 
 
