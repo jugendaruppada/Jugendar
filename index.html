@@ -808,20 +808,33 @@
   const commentEmpty = document.getElementById('commentEmpty');
   const signinFromComments = document.getElementById('signinFromComments');
 
-  function googleSignIn() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).then(function (result) {
-      const user = result.user;
-      db.collection('logins').add({
-        uid: user.uid,
-        name: user.displayName || '',
-        email: user.email || '',
-        provider: 'google',
-        page: PAGE_ID,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }).catch(function (e) { console.error(e); });
+  function logLogin(user) {
+    db.collection('logins').add({
+      uid: user.uid,
+      name: user.displayName || '',
+      email: user.email || '',
+      provider: 'google',
+      page: PAGE_ID,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).catch(function (e) { console.error(e); });
   }
+
+  function googleSignIn() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithRedirect(provider).catch(function (e) {
+      console.error('Sign-in error:', e);
+      alert('Sign-in failed: ' + e.message);
+    });
+  }
+
+  auth.getRedirectResult().then(function (result) {
+    if (result && result.user) {
+      logLogin(result.user);
+    }
+  }).catch(function (e) {
+    console.error('Redirect result error:', e);
+    if (e && e.code) alert('Sign-in error: ' + e.code);
+  });
 
   if (loginBtn) {
     loginBtn.addEventListener('click', function () {
