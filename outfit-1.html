@@ -34,7 +34,7 @@
   .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 
   /* NAV */
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-y: scroll; }
 
   nav {
     border-bottom: 1px solid var(--hairline);
@@ -365,13 +365,151 @@
     transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .underline-draw.visible { width: 72px; }
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+  .login-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--brass);
+    color: #0A0A0C;
+    font-size: 12.5px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .login-btn:hover { background: var(--brass-soft); transform: translateY(-1px); }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    padding: 4px 10px 4px 4px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+  }
+
+  .user-chip img { width: 26px; height: 26px; border-radius: 50%; display: block; }
+  .user-chip span { font-size: 12.5px; color: var(--text-muted); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .hidden { display: none !important; }
+  /* COMMENTS */
+  .comments-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 90px;
+  }
+
+  .comments-section .section-head,
+  .comments-section h2 {
+    margin-bottom: 28px;
+  }
+
+  .comment-form textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    color: var(--text);
+    padding: 14px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14.5px;
+    resize: vertical;
+    min-height: 84px;
+  }
+
+  .comment-form textarea:focus { outline: none; border-color: var(--brass); }
+
+  .comment-form button {
+    margin-top: 12px;
+    display: inline-block;
+    padding: 11px 26px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0A0A0C;
+    background: var(--brass);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .comment-form button:hover { background: var(--brass-soft); transform: translateY(-1px); }
+
+  .comment-signin-note {
+    color: var(--text-muted);
+    font-size: 14px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    padding: 16px 18px;
+  }
+
+  .comment-signin-note button {
+    margin-left: 4px;
+    background: none;
+    border: none;
+    color: var(--brass-soft);
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 14px;
+  }
+
+  .comment-list { margin-top: 32px; display: flex; flex-direction: column; gap: 0; }
+
+  .comment-item {
+    display: flex;
+    gap: 12px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .comment-item img { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; }
+
+  .comment-item .name { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .comment-item .time { font-size: 11.5px; color: var(--text-dim); margin-left: 8px; font-weight: 400; }
+  .comment-item .text { margin-top: 4px; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+
+  .comment-empty { color: var(--text-dim); font-size: 14px; margin-top: 20px; }
 </style>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCCox9mzb-VvD0BQPIxOcQx2zOtSVjuoio",
+    authDomain: "jugendar-uppada.firebaseapp.com",
+    projectId: "jugendar-uppada",
+    storageBucket: "jugendar-uppada.firebasestorage.app",
+    messagingSenderId: "698989743795",
+    appId: "1:698989743795:web:c7bc7246c450720682aac6",
+    measurementId: "G-S9TZ3W4NKE"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
 </head>
+
 <body>
 
 <nav>
   <div class="wrap">
     <a href="index.html" class="logo">Jugendar</a>
+    <div class="nav-actions">
+      <button class="login-btn" id="loginBtn">Login</button>
+      <div class="user-chip hidden" id="userChip">
+        <img id="userChipImg" src="" alt="">
+        <span id="userChipName">Account</span>
+      </div>
+    </div>
     <button class="nav-toggle" id="navToggle" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -450,12 +588,14 @@
     navMenu.classList.remove('open');
     navOverlay.classList.remove('open');
     navToggle.classList.remove('open');
+    document.body.style.overflow = '';
   }
 
   navToggle.addEventListener('click', function () {
     const isOpen = navMenu.classList.toggle('open');
     navOverlay.classList.toggle('open', isOpen);
     navToggle.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
   });
 
   navOverlay.addEventListener('click', closeNav);
@@ -511,7 +651,124 @@
     }, { threshold: 0.12 });
     revealEls.forEach(function (el) { io.observe(el); });
   }
+
+  // Auth + Comments
+  const PAGE_ID = "outfit-1";
+  const loginBtn = document.getElementById('loginBtn');
+  const userChip = document.getElementById('userChip');
+  const userChipImg = document.getElementById('userChipImg');
+  const userChipName = document.getElementById('userChipName');
+  const commentForm = document.getElementById('commentForm');
+  const commentSigninNote = document.getElementById('commentSigninNote');
+  const commentText = document.getElementById('commentText');
+  const commentList = document.getElementById('commentList');
+  const commentEmpty = document.getElementById('commentEmpty');
+  const signinFromComments = document.getElementById('signinFromComments');
+
+  function googleSignIn() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).then(function (result) {
+      const user = result.user;
+      db.collection('logins').add({
+        uid: user.uid,
+        name: user.displayName || '',
+        email: user.email || '',
+        provider: 'google',
+        page: PAGE_ID,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(function (e) { console.error(e); });
+    }).catch(function (e) { console.error(e); });
+  }
+
+  if (loginBtn) {
+    loginBtn.addEventListener('click', function () {
+      if (auth.currentUser) { auth.signOut(); } else { googleSignIn(); }
+    });
+  }
+  if (userChip) {
+    userChip.addEventListener('click', function () { auth.signOut(); });
+  }
+  if (signinFromComments) {
+    signinFromComments.addEventListener('click', googleSignIn);
+  }
+
+  auth.onAuthStateChanged(function (user) {
+    if (user) {
+      if (loginBtn) loginBtn.classList.add('hidden');
+      if (userChip) {
+        userChip.classList.remove('hidden');
+        userChipImg.src = user.photoURL || '';
+        userChipName.textContent = user.displayName ? user.displayName.split(' ')[0] : 'Account';
+      }
+      if (commentForm) commentForm.classList.remove('hidden');
+      if (commentSigninNote) commentSigninNote.classList.add('hidden');
+    } else {
+      if (loginBtn) loginBtn.classList.remove('hidden');
+      if (userChip) userChip.classList.add('hidden');
+      if (commentForm) commentForm.classList.add('hidden');
+      if (commentSigninNote) commentSigninNote.classList.remove('hidden');
+    }
+  });
+
+  if (commentForm) {
+    commentForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const text = commentText.value.trim();
+      if (!text || !auth.currentUser) return;
+      const user = auth.currentUser;
+      db.collection('comments').add({
+        page: PAGE_ID,
+        uid: user.uid,
+        name: user.displayName || 'Anonymous',
+        photoURL: user.photoURL || '',
+        text: text,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function () { commentText.value = ''; }).catch(function (e) { console.error(e); });
+    });
+  }
+
+  if (commentList) {
+    db.collection('comments').where('page', '==', PAGE_ID).orderBy('timestamp', 'asc')
+      .onSnapshot(function (snapshot) {
+        commentList.innerHTML = '';
+        if (snapshot.empty) {
+          if (commentEmpty) commentEmpty.classList.remove('hidden');
+          return;
+        }
+        if (commentEmpty) commentEmpty.classList.add('hidden');
+        snapshot.forEach(function (doc) {
+          const c = doc.data();
+          const when = c.timestamp && c.timestamp.toDate ? c.timestamp.toDate().toLocaleDateString() : '';
+          const item = document.createElement('div');
+          item.className = 'comment-item';
+          item.innerHTML =
+            '<img src="' + (c.photoURL || '') + '" alt="' + (c.name || 'User') + '">' +
+            '<div><div class="name">' + (c.name || 'Anonymous') +
+            '<span class="time">' + when + '</span></div>' +
+            '<div class="text"></div></div>';
+          item.querySelector('.text').textContent = c.text || '';
+          commentList.appendChild(item);
+        });
+        commentList.scrollTop = commentList.scrollHeight;
+      }, function (err) { console.error('Comments error:', err); });
+  }
+
 </script>
+
+
+<section class="comments-section">
+  <h2>Comments</h2>
+  <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">Sign in with Google to leave a comment.</p>
+  <div class="comment-signin-note" id="commentSigninNote">
+    You need to be signed in to comment. <button id="signinFromComments">Sign in with Google</button>
+  </div>
+  <form class="comment-form hidden" id="commentForm">
+    <textarea id="commentText" placeholder="Share your thoughts..." required></textarea>
+    <button type="submit">Post comment</button>
+  </form>
+  <div class="comment-list" id="commentList"></div>
+  <p class="comment-empty hidden" id="commentEmpty">No comments yet — be the first to say something.</p>
+</section>
 
 </body>
 </html>
