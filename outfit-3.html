@@ -870,17 +870,10 @@
 
   // Auth + Comments
   document.addEventListener('DOMContentLoaded', function () {
-  const PAGE_ID = "outfit-3";
   const loginBtn = document.getElementById('loginBtn');
   const userChip = document.getElementById('userChip');
   const userChipImg = document.getElementById('userChipImg');
   const userChipName = document.getElementById('userChipName');
-  const commentForm = document.getElementById('commentForm');
-  const commentSigninNote = document.getElementById('commentSigninNote');
-  const commentText = document.getElementById('commentText');
-  const commentList = document.getElementById('commentList');
-  const commentEmpty = document.getElementById('commentEmpty');
-  const signinFromComments = document.getElementById('signinFromComments');
 
   function logLogin(user) {
     db.collection('logins').add({
@@ -888,7 +881,7 @@
       name: user.displayName || '',
       email: user.email || '',
       provider: 'google',
-      page: PAGE_ID,
+      page: location.pathname,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).catch(function (e) { console.error(e); });
 
@@ -896,7 +889,7 @@
       event_type: 'New Login',
       user_name: user.displayName || 'Unknown',
       user_email: user.email || 'Not provided',
-      page: PAGE_ID
+      page: location.pathname
     }).catch(function (e) { console.error('Email notify failed:', e); });
   }
 
@@ -925,9 +918,123 @@
   if (userChip) {
     userChip.addEventListener('click', function () { auth.signOut(); });
   }
-  if (signinFromComments) {
-    signinFromComments.addEventListener('click', googleSignIn);
-  }
+
+  const commentBoxes = Array.from(document.querySelectorAll('[data-comment-page]')).map(function (section) {
+    const box = {
+      pageId: section.dataset.commentPage,
+      signinNote: section.querySelector('.comment-signin-note'),
+      signinBtn: section.querySelector('.signin-from-comments'),
+      form: section.querySelector('.comment-form'),
+      textInput: section.querySelector('.comment-text-input'),
+      list: section.querySelector('.comment-list'),
+      empty: section.querySelector('.comment-empty')
+    };
+
+    if (box.signinBtn) box.signinBtn.addEventListener('click', googleSignIn);
+
+    if (box.form) {
+      box.form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const text = box.textInput.value.trim();
+        if (!text || !auth.currentUser) return;
+        const user = auth.currentUser;
+        db.collection('comments').add({
+          page: box.pageId,
+          uid: user.uid,
+          name: user.displayName || 'Anonymous',
+          photoURL: user.photoURL || '',
+          text: text,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(function () {
+          box.textInput.value = '';
+          emailjs.send('service_t44per9', 'template_fq9y2x3', {
+            event_type: 'New Comment (' + box.pageId + '): ' + text,
+            user_name: user.displayName || 'Anonymous',
+            user_email: user.email || 'Not provided',
+            page: box.pageId
+          }).catch(function (e) { console.error('Email notify failed:', e); });
+        }).catch(function (e) { console.error(e); });
+      });
+    }
+
+    if (box.list) {
+      db.collection('comments').where('page', '==', box.pageId).orderBy('timestamp', 'asc')
+        .onSnapshot(function (snapshot) {
+          box.list.innerHTML = '';
+          if (snapshot.empty) {
+            if (box.empty) box.empty.classList.remove('hidden');
+            return;
+          }
+          if (box.empty) box.empty.classList.add('hidden');
+          snapshot.forEach(function (doc) {
+            const c = doc.data();
+            const docId = doc.id;
+            const when = c.timestamp && c.timestamp.toDate ? c.timestamp.toDate().toLocaleDateString() : '';
+            const isOwner = auth.currentUser && auth.currentUser.uid === c.uid;
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+            item.innerHTML =
+              '<img src="' + (c.photoURL || '') + '" alt="' + (c.name || 'User') + '">' +
+              '<div style="flex:1;"><div class="name">' + (c.name || 'Anonymous') +
+              '<span class="time">' + when + '</span></div>' +
+              '<div class="text"></div>' +
+              (isOwner ? '<div class="comment-actions"><button class="comment-edit-btn">Edit</button><button class="comment-delete-btn">Delete</button></div>' : '') +
+              '</div>';
+            item.querySelector('.text').textContent = c.text || '';
+
+            if (isOwner) {
+              item.querySelector('.comment-delete-btn').addEventListener('click', function () {
+                if (confirm('Delete this comment?')) {
+                  db.collection('comments').doc(docId).delete().catch(function (e) { console.error(e); });
+                }
+              });
+              item.querySelector('.comment-edit-btn').addEventListener('click', function () {
+                const textDiv = item.querySelector('.text');
+                const currentText = c.text || '';
+                const textarea = document.createElement('textarea');
+                textarea.value = currentText;
+                textarea.className = 'comment-edit-textarea';
+                const saveBtn = document.createElement('button');
+                saveBtn.textContent = 'Save';
+                saveBtn.className = 'comment-save-btn';
+                const cancelBtn = document.createElement('button');
+                cancelBtn.textContent = 'Cancel';
+                cancelBtn.className = 'comment-cancel-btn';
+                textDiv.replaceWith(textarea);
+                textarea.insertAdjacentElement('afterend', cancelBtn);
+                textarea.insertAdjacentElement('afterend', saveBtn);
+                saveBtn.addEventListener('click', function () {
+                  const newText = textarea.value.trim();
+                  if (!newText) return;
+                  db.collection('comments').doc(docId).update({ text: newText, edited: true }).catch(function (e) { console.error(e); });
+                });
+                cancelBtn.addEventListener('click', function () {
+                  const restored = document.createElement('div');
+                  restored.className = 'text';
+                  restored.textContent = currentText;
+                  textarea.replaceWith(restored);
+                  saveBtn.remove();
+                  cancelBtn.remove();
+                });
+              });
+            }
+
+            if (c.edited) {
+              const nameEl = item.querySelector('.name');
+              const editedTag = document.createElement('span');
+              editedTag.className = 'time';
+              editedTag.textContent = ' (edited)';
+              nameEl.appendChild(editedTag);
+            }
+
+            box.list.appendChild(item);
+          });
+          box.list.scrollTop = box.list.scrollHeight;
+        }, function (err) { console.error('Comments error:', err); });
+    }
+
+    return box;
+  });
 
   auth.onAuthStateChanged(function (user) {
     if (user) {
@@ -937,136 +1044,36 @@
         userChipImg.src = user.photoURL || '';
         userChipName.textContent = user.displayName ? user.displayName.split(' ')[0] : 'Account';
       }
-      if (commentForm) commentForm.classList.remove('hidden');
-      if (commentSigninNote) commentSigninNote.classList.add('hidden');
+      commentBoxes.forEach(function (box) {
+        if (box.form) box.form.classList.remove('hidden');
+        if (box.signinNote) box.signinNote.classList.add('hidden');
+      });
     } else {
       if (loginBtn) loginBtn.classList.remove('hidden');
       if (userChip) userChip.classList.add('hidden');
-      if (commentForm) commentForm.classList.add('hidden');
-      if (commentSigninNote) commentSigninNote.classList.remove('hidden');
+      commentBoxes.forEach(function (box) {
+        if (box.form) box.form.classList.add('hidden');
+        if (box.signinNote) box.signinNote.classList.remove('hidden');
+      });
     }
   });
-
-  if (commentForm) {
-    commentForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const text = commentText.value.trim();
-      if (!text || !auth.currentUser) return;
-      const user = auth.currentUser;
-      db.collection('comments').add({
-        page: PAGE_ID,
-        uid: user.uid,
-        name: user.displayName || 'Anonymous',
-        photoURL: user.photoURL || '',
-        text: text,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(function () {
-        commentText.value = '';
-        emailjs.send('service_t44per9', 'template_fq9y2x3', {
-          event_type: 'New Comment: "' + text,
-          user_name: user.displayName || 'Anonymous',
-          user_email: user.email || 'Not provided',
-          page: PAGE_ID
-        }).catch(function (e) { console.error('Email notify failed:', e); });
-      }).catch(function (e) { console.error(e); });
-    });
-  }
-
-  if (commentList) {
-    db.collection('comments').where('page', '==', PAGE_ID).orderBy('timestamp', 'asc')
-      .onSnapshot(function (snapshot) {
-        commentList.innerHTML = '';
-        if (snapshot.empty) {
-          if (commentEmpty) commentEmpty.classList.remove('hidden');
-          return;
-        }
-        if (commentEmpty) commentEmpty.classList.add('hidden');
-        snapshot.forEach(function (doc) {
-          const c = doc.data();
-          const docId = doc.id;
-          const when = c.timestamp && c.timestamp.toDate ? c.timestamp.toDate().toLocaleDateString() : '';
-          const isOwner = auth.currentUser && auth.currentUser.uid === c.uid;
-          const item = document.createElement('div');
-          item.className = 'comment-item';
-          item.innerHTML =
-            '<img src="' + (c.photoURL || '') + '" alt="' + (c.name || 'User') + '">' +
-            '<div style="flex:1;"><div class="name">' + (c.name || 'Anonymous') +
-            '<span class="time">' + when + '</span></div>' +
-            '<div class="text"></div>' +
-            (isOwner ? '<div class="comment-actions"><button class="comment-edit-btn">Edit</button><button class="comment-delete-btn">Delete</button></div>' : '') +
-            '</div>';
-          item.querySelector('.text').textContent = c.text || '';
-
-          if (isOwner) {
-            item.querySelector('.comment-delete-btn').addEventListener('click', function () {
-              if (confirm('Delete this comment?')) {
-                db.collection('comments').doc(docId).delete().catch(function (e) { console.error(e); });
-              }
-            });
-            item.querySelector('.comment-edit-btn').addEventListener('click', function () {
-              const textDiv = item.querySelector('.text');
-              const currentText = c.text || '';
-              const textarea = document.createElement('textarea');
-              textarea.value = currentText;
-              textarea.className = 'comment-edit-textarea';
-              const saveBtn = document.createElement('button');
-              saveBtn.textContent = 'Save';
-              saveBtn.className = 'comment-save-btn';
-              const cancelBtn = document.createElement('button');
-              cancelBtn.textContent = 'Cancel';
-              cancelBtn.className = 'comment-cancel-btn';
-              textDiv.replaceWith(textarea);
-              textarea.insertAdjacentElement('afterend', cancelBtn);
-              textarea.insertAdjacentElement('afterend', saveBtn);
-              saveBtn.addEventListener('click', function () {
-                const newText = textarea.value.trim();
-                if (!newText) return;
-                db.collection('comments').doc(docId).update({
-                  text: newText,
-                  edited: true
-                }).catch(function (e) { console.error(e); });
-              });
-              cancelBtn.addEventListener('click', function () {
-                const restored = document.createElement('div');
-                restored.className = 'text';
-                restored.textContent = currentText;
-                textarea.replaceWith(restored);
-                saveBtn.remove();
-                cancelBtn.remove();
-              });
-            });
-          }
-
-          if (c.edited) {
-            const nameEl = item.querySelector('.name');
-            const editedTag = document.createElement('span');
-            editedTag.className = 'time';
-            editedTag.textContent = ' (edited)';
-            nameEl.appendChild(editedTag);
-          }
-
-          commentList.appendChild(item);
-        });
-        commentList.scrollTop = commentList.scrollHeight;
-      }, function (err) { console.error('Comments error:', err); });
-  }
 
   });
 </script>
 
 
-<section class="comments-section">
+<section class="comments-section" data-comment-page="outfit-3">
   <h2>Comments</h2>
   <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">Sign in with Google to leave a comment.</p>
-  <div class="comment-signin-note" id="commentSigninNote">
-    You need to be signed in to comment. <button id="signinFromComments">Sign in with Google</button>
+  <div class="comment-signin-note">
+    You need to be signed in to comment. <button class="signin-from-comments">Sign in with Google</button>
   </div>
-  <form class="comment-form hidden" id="commentForm">
-    <textarea id="commentText" placeholder="Share your thoughts..." required></textarea>
+  <form class="comment-form hidden">
+    <textarea class="comment-text-input" placeholder="Share your thoughts..." required></textarea>
     <button type="submit">Post comment</button>
   </form>
-  <div class="comment-list" id="commentList"></div>
-  <p class="comment-empty hidden" id="commentEmpty">No comments yet — be the first to say something.</p>
+  <div class="comment-list"></div>
+  <p class="comment-empty hidden">No comments yet — be the first to say something.</p>
 </section>
 
 </body>
